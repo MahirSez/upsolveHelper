@@ -6,7 +6,7 @@ h1 {
 
 #main-content {
 	margin-top: 25px;
-	font-size: 20px;
+	font-size: 22px;
 }
 
 #handleSearch {
@@ -26,11 +26,10 @@ h1 {
 }
 
 #problem-element {
-	background-color: #28a745;
-	color: white;
+	background-color: #343a40;
 	margin-left: : -20px;
-	padding: 15px 0px;
-
+	padding: 15px 30px;
+	text-align: left;
 }
 
 #problem-element:nth-child(1) {
@@ -40,7 +39,20 @@ h1 {
 #problem-element:nth-last-child(1) {
 	/*margin-top: 15px;*/
 	border-radius: 0px 0px 10px 10px ;
+	padding-bottom:  15px;
 }
+
+#problem-element:hover {
+	background-color: white;
+}
+#problem-element a {
+	color:white;
+}
+#problem-element:hover a{
+	color: black;
+}
+
+
 
 a:hover, a:focus {
 	text-decoration: none;
@@ -48,9 +60,5 @@ a:hover, a:focus {
 }
 a {
 	color: black;
-}
-
-.collapse {
-	/*margin-top: 20px;*/
-	/*padding-top: 30px;*/
+	display: block;
 }
