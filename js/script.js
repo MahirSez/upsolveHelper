@@ -2,43 +2,47 @@
 
 	var upHelper = {};
 
-	var cf = "https://codeforces.com/api/user.rating?handle=Rogue33"
+	var cf = "https://codeforces.com/api/user.rating?handle="
 	document.addEventListener("DOMContentLoaded", function(event) {
 
+		function getHandle(event) {
 
-		$ajaxUtil.sendGetRequest(cf, buildHTML, true);
 
-		function buildHTML(returnData) {
+			var handle = document.querySelector("#name").value;
+			
+			cf += handle;
+			$ajaxUtil.sendGetRequest(cf, buildHTML, true);
 
-			// console.log(returnData);
+			function buildHTML(returnData) {
 
-			var htmlCode = "<ol>\n";
-			for(var val in returnData.result) {
-				var contestName = returnData.result[val].contestName;
-				var rating = returnData.result[val].newRating - returnData.result[val].oldRating;
+				document.querySelector("h1").textContent = handle;
+				
+				var htmlCode = "<ol>\n";
+				for(var val in returnData.result) {
+					var contestName = returnData.result[val].contestName;
+					var rating = returnData.result[val].newRating - returnData.result[val].oldRating;
 
-				var add = "";
-				add += "\t<li>" + contestName + " ---------> " ;
-				if(rating < 0 ) add += "<span class='red'>";
-				else if( rating > 0 ) add += "<span class='green'>";
-				add += rating ;
-				add += "</span> </li>\n";
+					var add = "";
+					add += "\t<li>" + contestName + " ---------> " ;
+					if(rating < 0 ) add += "<span class='red'>";
+					else if( rating > 0 ) add += "<span class='green'>";
+					add += rating ;
+					add += "</span> </li>\n";
 
-				htmlCode += add;
+					htmlCode += add;
+
+				}
+				htmlCode += "</ol>\n"
+
+				// console.log(htmlCode);
+
+				document.querySelector("#main-content").innerHTML = htmlCode;
+				document.querySelector("h1").innerHTML = handle;
 
 			}
-			htmlCode += "</ol>\n"
-
-			// console.log(htmlCode);
-
-			document.querySelector("#main-content").innerHTML = htmlCode;
-			document.querySelector("h1").innerHTML = "Rogue33";
-
 		}
 
-
-
-
+		document.querySelector("button").addEventListener("click",getHandle);
 	});
 
 	global.$upHelper = upHelper;

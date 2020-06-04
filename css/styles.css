@@ -10,6 +10,12 @@ ol {
 	padding-left:100px;
 }
 
+.container {
+	padding-top: 100px;
+	font-size: 20px;
+	text-align: center;
+}
+
 .red {
 	color: red;
 	font-weight: bold;
