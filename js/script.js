@@ -25,6 +25,7 @@
 			insertText("h1", upHelper.result[0].handle);
 		}
 		var htmlCode = "";
+		upHelper.result.reverse();
 		for(var i = 0 ; i < upHelper.result.length; i++) {
 
 			var newRow = insertProperty(response, "contest_id", upHelper.result[i]["contestId"]);
