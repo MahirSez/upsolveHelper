@@ -1,3 +1,7 @@
-<div class="col" id="problem-element">
-	<a href = "https://codeforces.com/problemset/problem/{{contest_id}}/{{problem_index}}" target = "_blank">{{problem_name}} </a>
+<div class="container" id="problem-element">
+	<a id = "id_{{contest_id}}{{problem_index}}" href = "https://codeforces.com/problemset/problem/{{contest_id}}/{{problem_index}}" target = "_blank">
+		<span >{{problem_name}} </span>
+		<span  class ="{{icon}}"></span>
+		<span id="solve-count">x{{solve_count}}</span>
+	</a>
 </div>
