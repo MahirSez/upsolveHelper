@@ -29,7 +29,9 @@
 			}
 		}
 	}
+
 	global.$ajaxUtil = ajaxUtil;
+
 
 })(window);
 

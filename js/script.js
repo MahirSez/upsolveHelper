@@ -2,17 +2,13 @@
 
 	var upHelper = {};
 
-	var cf = "https://codeforces.com/api/user.rating?handle="
+
 	document.addEventListener("DOMContentLoaded", function(event) {
 
 		function getHandle(event) {
-
-
-
-
 			var handle = document.querySelector("#handle").value;
 			
-			cf += handle;
+			var cf = "https://codeforces.com/api/user.rating?handle=" +  handle;
 			$ajaxUtil.sendGetRequest(cf, buildHTML, true);
 
 			function buildHTML(returnData) {
@@ -36,14 +32,15 @@
 				}
 				htmlCode += "</ol>\n"
 
-				console.log(handle);
 
 				document.querySelector("#main-content").innerHTML = htmlCode;
+				document.querySelector("input").value = "";
 
 			}
 		}
 
 		document.querySelector("button").addEventListener("click",getHandle);
+
 	});
 
 	global.$upHelper = upHelper;
