@@ -13,16 +13,33 @@ h1 {
 	margin-left: 10px;
 }
 
-.col {
+#contest-name-column {
 	border: 1px solid black;
-	padding: 20px;
+	padding: 20px 0px;
 	margin: 10px 150px;
 	text-align: center;
-	height: 70px;
+	border-radius: 10px;
 }
 
-.col:hover {
+#contest-name-column:hover {
 	box-shadow: 0 1px 10px 1px #cccccc;
+}
+
+#problem-element {
+	background-color: #28a745;
+	color: white;
+	margin-left: : -20px;
+	padding: 15px 0px;
+
+}
+
+#problem-element:nth-child(1) {
+	margin-top: 15px;
+	border-radius: 10px 10px 0 0 ;
+}
+#problem-element:nth-last-child(1) {
+	/*margin-top: 15px;*/
+	border-radius: 0px 0px 10px 10px ;
 }
 
 a:hover, a:focus {
@@ -31,4 +48,9 @@ a:hover, a:focus {
 }
 a {
 	color: black;
+}
+
+.collapse {
+	/*margin-top: 20px;*/
+	/*padding-top: 30px;*/
 }

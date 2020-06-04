@@ -1,5 +1,29 @@
 <div class="row">
-	<div class="col">
-		<a href="https://codeforces.com/contest/{{contest_id}}/standings/friends/true" target = "_blank"><div id="contest-tile"><span>{{contest_name}}</span></div></a>
+	<div class="col" id="contest-name-column">
+		<a class="button" data-toggle="collapse" href="#{{contest_id}}" role="button" aria-expanded="false" aria-controls="{{contest_id}}">
+			<div class = "container-fluid" id="contest-tile">
+				{{contest_name}}
+			</div>
+		</a>
+		<div class="collapse container-fluid" id="{{contest_id}}">
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} A
+			</div>
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} B
+			</div>
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} C
+			</div>
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} D
+			</div>
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} E
+			</div>
+			<div class="col" id="problem-element">
+		    	{{Problem Name}} F
+			</div>
+		</div>
 	</div>
 </div>
