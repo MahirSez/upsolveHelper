@@ -1,46 +1,55 @@
 (function (global) {
 
 	var upHelper = {};
+	var contestListHTML = "snippets/contest-list-snippet.html";
 
+
+	var insertHTML = function(selector, html) {
+		document.querySelector(selector).innerHTML = html;
+	}
+
+	var insertText = function(selector, text) {
+		document.querySelector(selector).textContent = text;
+	}
+
+	var insertProperty = function (string, propName, propVal)  {
+		var propToreplace = "{{" + propName + "}}";
+		string = string.replace(new RegExp(propToreplace,"g"), propVal);
+		return string;
+	}
+
+	var loadContestNames = function(response) {
+
+		console.log(upHelper.result);
+		if(upHelper.result.length > 0) {
+			insertText("h1", upHelper.result[0].handle);
+		}
+		var htmlCode = "";
+		for(var i = 0 ; i < upHelper.result.length; i++) {
+
+			var newRow = insertProperty(response, "contest_id", upHelper.result[i]["contestId"]);
+			newRow = insertProperty(newRow, "contest_name", upHelper.result[i]["contestName"]);
+			htmlCode += newRow;
+		}
+		insertHTML("#main-content", htmlCode);
+	}
+
+	var buildHTML = function (response) {
+
+		if(response.status != "OK") return;
+		upHelper.result = response.result;
+
+		$ajaxUtil.sendGetRequest(contestListHTML, loadContestNames, false);
+	}
 
 	document.addEventListener("DOMContentLoaded", function(event) {
 
-		function getHandle(event) {
-			var handle = document.querySelector("#handle").value;
-			
-			var cf = "https://codeforces.com/api/user.rating?handle=" +  handle;
-			$ajaxUtil.sendGetRequest(cf, buildHTML, true);
-
-			function buildHTML(returnData) {
-
-				var htmlCode = "<h1>" + handle + "</h1>\n";
-
-				htmlCode += "<ol>\n";
-				for(var val in returnData.result) {
-					var contestName = returnData.result[val].contestName;
-					var rating = returnData.result[val].newRating - returnData.result[val].oldRating;
-
-					var add = "";
-					add += "\t<li>" + contestName + " ---------> " ;
-					if(rating < 0 ) add += "<span class='red'>";
-					else if( rating > 0 ) add += "<span class='green'>";
-					add += rating ;
-					add += "</span> </li>\n";
-
-					htmlCode += add;
-
-				}
-				htmlCode += "</ol>\n"
-
-
-				document.querySelector("#main-content").innerHTML = htmlCode;
-				document.querySelector("input").value = "";
-
-			}
+		function handleData(event) {
+			var inputHandle = document.querySelector("#inputHandle").value;
+			var cfAPIUrl = "https://codeforces.com/api/user.rating?handle=" +  inputHandle;
+			$ajaxUtil.sendGetRequest(cfAPIUrl, buildHTML, true);
 		}
-
-		document.querySelector("button").addEventListener("click",getHandle);
-
+		document.querySelector("button").addEventListener("click",handleData);
 	});
 
 	global.$upHelper = upHelper;
