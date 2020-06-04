@@ -11,18 +11,31 @@
     <script src="js/ajax-util.js"></script>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-	
 	<script src="js/script.js"></script>
 </head>
 <body>
-	<h1> Hello World!!</h1>
+    <header>
+      <!-- Fixed navbar -->
+		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+			<a class="navbar-brand" href="index.html">ME Saaad</a>
+			<div class="collapse navbar-collapse" id="navbarCollapse">
+
+
+				<ul class="navbar-nav ml-auto"> 
+					<li class="nav-item">
+						<input class="form-control mr-sm-8" type="text" placeholder="Enter handle" aria-label="Search" id="handle">
+					</li>
+					<li class="nav-item">
+						<button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
+					</li>
+				</ul>
+			</div>
+		</nav>
+    </header>
+
 
 	<div class="container" id="main-content">
-		<div class="form-group">
-			<label for="#">CodeForces Handle:</label>
-			<input type="text" name="textfield" value="" id="name" autocomplete="off" >
-			<button type = "submit" class="btn btn-primary"> Submit </button>
-		</div>
+		<h1></h1>
 	</div>
 
 </body>

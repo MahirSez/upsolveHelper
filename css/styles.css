@@ -24,3 +24,6 @@ ol {
 	color: green;
 	font-weight: bold;
 }
+li {
+	margin-left: 15px;
+}

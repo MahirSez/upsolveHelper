@@ -8,16 +8,18 @@
 		function getHandle(event) {
 
 
-			var handle = document.querySelector("#name").value;
+
+
+			var handle = document.querySelector("#handle").value;
 			
 			cf += handle;
 			$ajaxUtil.sendGetRequest(cf, buildHTML, true);
 
 			function buildHTML(returnData) {
 
-				document.querySelector("h1").textContent = handle;
-				
-				var htmlCode = "<ol>\n";
+				var htmlCode = "<h1>" + handle + "</h1>\n";
+
+				htmlCode += "<ol>\n";
 				for(var val in returnData.result) {
 					var contestName = returnData.result[val].contestName;
 					var rating = returnData.result[val].newRating - returnData.result[val].oldRating;
@@ -34,10 +36,9 @@
 				}
 				htmlCode += "</ol>\n"
 
-				// console.log(htmlCode);
+				console.log(handle);
 
 				document.querySelector("#main-content").innerHTML = htmlCode;
-				document.querySelector("h1").innerHTML = handle;
 
 			}
 		}
