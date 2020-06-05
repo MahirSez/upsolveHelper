@@ -10,21 +10,22 @@
 	var userStatusURL = "https://codeforces.com/api/user.status?handle=";
 
 	problemMap = {};
+	var t0 = 0;
+	var t1 = 0;
 
-	var limit = 100;
 
+	var printTime = function() {
+		console.log(t1 - t0 + "ms" );
+	}
 
 	var insertHTML = function(selector, html) {
-		// var selection = document.querySelector(selector) !== null;
 		 document.querySelector(selector).innerHTML = html;
 	}
 	var appendHTML = function(selector, html) {
-		// var selection = document.querySelector(selector) !== null;
 		 document.querySelector(selector).innerHTML += html;
 	}
 
 	var insertText = function(selector, text) {
-		// var selection = document.querySelector(selector) !== null;
 		 document.querySelector(selector).textContent = text;
 	}
 
@@ -34,116 +35,176 @@
 		return string;
 	}
 
-	var loadProblems = function(response) {
+
+
+	var updateAC = function(response) {
+
+
+
 		if(response.status != "OK") return;
 
-		upHelper.problems = response.result.problems.reverse();
-		upHelper.problemStats = response.result.problemStatistics.reverse(); // problems[i] and problemStats[i] both indicate same problem
+		upHelper.userStatus = response.result;
 
-		$ajaxUtil.sendGetRequest(problemElementHTML, function(response) {
+		// console.log(upHelper.userStatus);
+		// console.log(upHelper.contestRecord);
 
-			for(var i = 0 ; i < upHelper.contests.length ; i++ ) {
+		for(var id in upHelper.userStatus) {
+			if( upHelper.userStatus[id]["verdict"] != "OK") continue;
+			if(upHelper.userStatus[id]["problem"]["contestId"]> 100000) continue;
+			var tgt = ".id_" + upHelper.userStatus[id]["problem"]["contestId"] + upHelper.userStatus[id]["problem"]["index"];
+			
+			if(problemMap[tgt] == 1)  {
 
-				var ok = false;
-				for(var j = 0 ; j < upHelper.problemStats.length ; j++ ) {
-
-					if( upHelper.contests[i]["id"] == upHelper.problemStats[j]["contestId"] ) {
-						var htmlCode = response;
-						htmlCode = insertProperty(htmlCode, "problem_name", upHelper.problemStats[j]["contestId"]  + upHelper.problemStats[j]["index"] + " - "+ upHelper.problems[j]["name"] );
-						htmlCode = insertProperty(htmlCode, "contest_id",  upHelper.problemStats[j]["contestId"] );
-						htmlCode = insertProperty(htmlCode, "problem_index",  upHelper.problemStats[j]["index"] );
-						htmlCode = insertProperty(htmlCode, "solve_count",upHelper.problemStats[j]["solvedCount"] );
-						appendHTML("#id_" + upHelper.problemStats[j]["contestId"], htmlCode);
-						ok = true;
-
-						problemMap[ "#id_" + upHelper.problemStats[j]["contestId"] + upHelper.problemStats[j]["index"] ] = 1;
-					}
-				}
-				if(ok == false) {
-					console.log("well that was unexpected!, no info about contest: " + upHelper.contests[i]["id"] +upHelper.contests[i]["name"] );
-				}
+				document.querySelector(tgt).style.backgroundColor = "#28a745";
+				// console.log(tgt);
+				problemMap[tgt] = 0;
+				
 			}
+			else if(problemMap[tgt] == undefined ){
+				
+				var frm = upHelper.userStatus[id]["problem"]["contestId"] - 10;
+				var to = upHelper.userStatus[id]["problem"]["contestId"] + 10;
+				var ok = 0;
 
-			$ajaxUtil.sendGetRequest(userStatusURL + upHelper.userHandle,function(response) {
+				for(var i = frm ; i <= to ; i++ ) {
+					var name = upHelper.userStatus[id]["problem"]["name"];
+					var prevContestId = i;
 
-				if(response.status != "OK") return;
+					if(upHelper.contestRecord[ prevContestId ]) {
+						
+						for(var j = 0; j < upHelper.contestRecord[ prevContestId ]["problemList"].length ; j++) {
 
-				upHelper.userStatus = response.result;
+							if(upHelper.contestRecord[ prevContestId ]["problemList"][ j ]["name"] != name) continue;
+							tgt = ".id_" + prevContestId + upHelper.contestRecord[ prevContestId ]["problemList"][ j ]["index"];
+							if(problemMap[tgt] == 1)  {
 
-				for(var id in upHelper.userStatus) {
-					if( upHelper.userStatus[id]["verdict"] != "OK") continue;
-					var tgt = "#id_" + upHelper.userStatus[id]["problem"]["contestId"] + upHelper.userStatus[id]["problem"]["index"];
-					
-					if(problemMap[tgt] == 1)  {
-						// console.log("got: " +  tgt);
-						// var ret = document.querySelector(tgt).innerHTML;
-						// ret = ret.replace(new RegExp("{{icon}}","g"), "glyphicon glyphicon-ok");
-						// document.querySelector(tgt).innerHTML = ret;
-						appendHTML(tgt, "(AC)")
+								document.querySelector(tgt).style.backgroundColor = "#28a745";
+								problemMap[tgt] = 0;
+								ok = 1;
+								break;
+							}
+							else if(problemMap[tgt] ==0) {
+								ok = 1;
+								break;
+							}
+
+						}
 					}
 				}
+				// if(ok == 0 ) {
+				// 	console.log("Couldn't find: " + upHelper.userStatus[id]["contestId"] +" -> "+ upHelper.userStatus[id]["problem"]["index"] + " " + upHelper.userStatus[id]["problem"]["name"]);
+				// }
+				
+
+			}
+		}
+	}
+
+	var setProblems = function(response) {
+
+		for(var j = 0 ; j < upHelper.problemStats.length ; j++ ) {
+
+			var htmlCode = response;
+			htmlCode = insertProperty(htmlCode, "problem_name", upHelper.problemStats[j]["contestId"]  + upHelper.problemStats[j]["index"] + " - "+ upHelper.problems[j]["name"] );
+			htmlCode = insertProperty(htmlCode, "contest_id",  upHelper.problemStats[j]["contestId"] );
+			htmlCode = insertProperty(htmlCode, "problem_index",  upHelper.problemStats[j]["index"] );
+			htmlCode = insertProperty(htmlCode, "solve_count",upHelper.problemStats[j]["solvedCount"] );
+			appendHTML("#id_" + upHelper.problemStats[j]["contestId"], htmlCode);
+
+			problemMap[ ".id_" + upHelper.problemStats[j]["contestId"] + upHelper.problemStats[j]["index"] ] = 1;
+		}
+		$ajaxUtil.sendGetRequest(userStatusURL + upHelper.userHandle, updateAC, true);
+	}
 
 
-			},true);
+
+	var loadContestNames = function (response) {	//4
+
+
+		if(response.status != "OK") return;
+
+
+		$ajaxUtil.sendGetRequest(contestListHTML, function(htmlSnippet){
+
+			var htmlCode = "";
+
+
+			for(var i = 0 ; i < response.result.length ; i++) {
+
+				var contestId = response.result[i]["id"];
+				var contestName = response.result[i]["name"];
+				if(response.result[i]["phase"] != "FINISHED") continue;
+				if(upHelper.contestRecord[contestId] == undefined) {
+					continue;
+				}
+				upHelper.contestRecord[contestId]["contestName"] = contestName;
+
+
+				var newRow = htmlSnippet;
+				newRow = insertProperty(newRow, "contest_id", contestId);
+				newRow = insertProperty(newRow, "contest_name", contestName);
+				htmlCode += newRow;
+			}
+			insertHTML("#main-content", htmlCode);
+			
+			$ajaxUtil.sendGetRequest(problemElementHTML, setProblems, false);
 
 		}, false);
 	}
 
-	var loadContestNames = function(response) {
-
-		var htmlCode = "";
-		for(var i = 0 ; i < upHelper.contests.length; i++) {
-
-			var newRow = response;
-			newRow = insertProperty(newRow, "contest_id", upHelper.contests[i]["id"]);
-			newRow = insertProperty(newRow, "contest_name", upHelper.contests[i]["name"]);
-			htmlCode += newRow;
-		}
-		insertHTML("#main-content", htmlCode);
-
-		$ajaxUtil.sendGetRequest(problemsURL, loadProblems, true);
-
-	}
-
-	var buildHTML = function (response) {
-
+	var loadProblems = function(response) {	//3
 		if(response.status != "OK") return;
-		upHelper.contests = []
 
-		var contestCnt = 0, id = 0;
-		while(contestCnt < limit  && id < 1000) {
+		upHelper.contestRecord = new Array();
+		upHelper.problems = response.result.problems.reverse();
+		upHelper.problemStats = response.result.problemStatistics.reverse(); // problems[i] and problemStats[i] both indicate same problem
 
-			if(response.result[id]["phase"] == "FINISHED") {
-				upHelper.contests[contestCnt] = response.result[id];
-				contestCnt++;
+
+		for(var i = 0 ; i < upHelper.problems.length ; i++ ) {
+
+			if(upHelper.problems[i]["conestId"] != upHelper.problemStats[i]["conestId"] || upHelper.problems[i]["index"] != upHelper.problemStats[i]["index"] )  {
+				console.log("ERROR!");
+				continue;
 			}
-			id++;
+			upHelper.problems[i]["solvedCount"] = upHelper.problemStats[i]["solvedCount"];
+
+			var contestId = upHelper.problems[i]["contestId"];
+			upHelper.contestRecord[contestId] = upHelper.contestRecord[contestId] || {
+				contestName: "",
+				cotestId: contestId,
+				problemList: new Array(),
+			};
+			var len = upHelper.contestRecord[ contestId] [ "problemList" ].length;
+			upHelper.contestRecord[ contestId ][ "problemList" ][ len ] = upHelper.problems[i] ;
 		}
 
-		$ajaxUtil.sendGetRequest(contestListHTML, loadContestNames, false);
+		// console.log(upHelper.contestRecord);
+
+		$ajaxUtil.sendGetRequest(contestListURL, loadContestNames, true);
+		// $ajaxUtil.sendGetRequest(userStatusURL + upHelper.userHandle, updateAC, true) ;
 	}
 
-	var updateUserHandle = function(response) {
+	var updateUserHandle = function(response) {	//2
 
 		if(response.status != "OK") return;
 		upHelper.userHandle = response.result[0].handle;
 		insertText("h1", response.result[0].handle);
+
+		$ajaxUtil.sendGetRequest(problemsURL, loadProblems, true);	
 	}
 
-	document.addEventListener("DOMContentLoaded", function(event) {
+	document.addEventListener("DOMContentLoaded", function(event) {	//1
 
-		function handleData(event) {
+		function butttonClicked(event) {
 			var inputHandle = document.querySelector("#inputHandle").value;
+			// var inputHandle = "Rogue33";
 			var newUserInfoURL = userInfoURL +  inputHandle;
 
-
-			$ajaxUtil.sendGetRequest(newUserInfoURL, updateUserHandle, true);
-			$ajaxUtil.sendGetRequest(contestListURL, buildHTML, true);
-
-
-
+			
+			$ajaxUtil.sendGetRequest(newUserInfoURL, updateUserHandle, true);	
 		}
-		document.querySelector("button").addEventListener("click",handleData);
+		document.querySelector("button").addEventListener("click",butttonClicked);
+
 	});
 
 	global.$upHelper = upHelper;
