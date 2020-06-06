@@ -35,6 +35,10 @@
 		return string;
 	}
 
+	var getHTMLbySelector = function(selector) {
+		return document.querySelector(selector).innerHTML;
+	}
+
 
 
 	var updateAC = function(response) {
@@ -188,8 +192,10 @@
 
 		if(response.status != "OK") return;
 		upHelper.userHandle = response.result[0].handle;
-		insertText("h1", response.result[0].handle);
-
+		var htmlCode = getHTMLbySelector("h1");
+		htmlCode = insertProperty(htmlCode, "handle_name", upHelper.userHandle);
+		insertHTML("h1",htmlCode);
+		insertHTML("h1 a",upHelper.userHandle);
 		$ajaxUtil.sendGetRequest(problemsURL, loadProblems, true);	
 	}
 
